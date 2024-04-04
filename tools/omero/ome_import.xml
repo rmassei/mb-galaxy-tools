@@ -1,0 +1,42 @@
+<tool id="omero_connect_import" name="Connect and Import to OMERO" version="1.0">
+    <description>Connect to an OMERO server and import data</description>
+    <requirements>
+        <requirement type="package" version="5.6.2">omero-py</requirement>
+    </requirements>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        omero login -u $username -w $password -s $server -p $port &&
+        omero import $data_file_path
+        ]]>
+    </command>
+    <inputs>
+        <param name="username" type="text" label="Username" help="username."/>
+        <param name="password" type="password" label="Password" help="password."/>
+        <param name="server" type="text" label="Server" help="OMERO server"/>
+        <param name="port" type="integer" label="Port" help="OMERO port" value="4064"/>
+        <param name="data_file_path" type="file" label="Data File" help="The path to the data file to be imported into OMERO."/>
+    </inputs>
+    <outputs>
+        <data name="output" format="txt" label="Connection and Import status"/>
+    </outputs>
+    <tests>
+    </tests>
+    <help><![CDATA[
+
+**What it does**
+
+Connect and Import data into OMERO
+
+**Input**
+
+Images
+
+**Output**
+
+A log file
+
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1038/nmeth.1896</citation>
+    </citations>
+</tool>

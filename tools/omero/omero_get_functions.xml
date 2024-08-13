@@ -1,0 +1,64 @@
+<tool id="omero_objects_filter" name="Filter OMERO ojects" version="1.0.0">
+    <description> with ezomero </description>
+    <xrefs>
+        <xref type="bio.tools">omero</xref>
+    </xrefs>
+    <requirements>
+        <requirement type="package" version="1.0.0">python</requirement>
+        <requirement type="package" version="1.2.0">pandas</requirement>
+        <requirement type="package" version="3.0.1">ezomero</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        python $__tool_directory__/omero_get_functions.py
+        --user $__user__.extra_preferences.get('omero|username', $test_username)
+        --pws $__user__.extra_preferences.get('omero|password', $test_password)
+        --host $omero_host
+        --port $omero_port
+        --obj $obj
+        #if str($id) != "None":
+            --id "$id"
+        #end if
+        #if $output_file_name:
+            --output_file '$output_file'
+        #end if
+
+    ]]></command>
+    <inputs>
+        <param argument="user" type="text" optional="false" label="user" help="OMERO username"/>
+        <param argument="pws" type="text" optional="false" label="pws" help="OMERO password"/>
+        <param argument="host" type="text" optional="false" label="host" help="OMERO host"/>
+        <param argument="port" type="integer" optional="false" label="port" help="OMERO port"/>
+        <param name="obj" type="select" label="Object Type">
+            <option value="comment">Comment</option>
+            <option value="dataset">Dataset</option>
+            <option value="image">Image</option>
+            <option value="object">Object</option>
+            <option value="project">Project</option>
+            <option value="table">Table</option>
+            <option value="tag">Tag</option>
+        </param>
+        <param argument="--id" type="integer" optional="true" label="id" help="Object ID"/>
+        <param argument="--output_file_name" type="text" value="output.csv" optional="true" label="Output file name" help="Output file name (default: output.csv)"/>
+    </inputs>
+    <outputs>
+    <data name="output_file" format="csv" />
+    </outputs>
+    <tests>
+    <test>
+        <param name="user" value="testuser" />
+        <param name="pws" value="testpass" />
+        <param name="host" value="localhost" />
+        <param name="port" value="4064" />
+        <param name="obj" value="dataset" />
+        <param name="output_file_name" value="test_output.csv" />
+        <output name="output_file" file="test_output.csv" />
+    </test>
+</tests>    
+    <help><![CDATA[
+    This tool filters OMERO objects based on the selected object type and saves the output to a file. 
+        The OMERO username, password, host, port and object must be provided.
+    ]]></help>
+<citations>
+        <citation type="doi">10.1038/nmeth.1896</citation>
+    </citations>    
+</tool>

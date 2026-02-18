@@ -2,7 +2,7 @@
     <description> with omero-py </description>
     <macros>
         <import>macros.xml</import>
-        <token name="@VERSION_SUFFIX@">6</token>
+        <token name="@VERSION_SUFFIX@">7</token>
     </macros>
     <xrefs>
         <xref type="bio.tools">omero</xref>
@@ -23,46 +23,29 @@
             export OMERO_PASSWORD="$test_password" &&
        #end if
 
-        #if $session_id.session_id_input =="yes"
-          omero import folder
-           -T 'Dataset:name:$dataset_name'
-           -s '$omero_host'
-           -k \$UUID_SESSION_KEY
-           #if $skip_step != "no_skip"
-           --skip $skip_step
-           #end if
-           > $log &&
-        #else
-         omero import folder
-           -T 'Dataset:name:$dataset_name'
-           -s '$omero_host'
-           -p $omero_port
-           -u \$OMERO_USER
-           -w \$OMERO_PASSWORD
-           #if $skip_step != "no_skip"
-           --skip $skip_step
-            omero import folder
-                -T 'Dataset:name:$dataset_name'
-                -s '$omero_host'
-                #if $skip_step != "no_skip"
-                    --skip $skip_step
-                #end if
-                #if $session_id.session_id_input =="yes"
-                    -k "\$UUID_SESSION_KEY"
-                #else
-                    -u "\$OMERO_USER"
-                    -w "\$OMERO_PASSWORD"
-                #end if
+        omero import folder
+            -T 'Dataset:name:$dataset_name'
+            -s '$omero_host'
+            #if $skip_step != "no_skip"
+                --skip $skip_step
+            #end if
+            #if $session_id.session_id_input =="yes"
+                -k "\$UUID_SESSION_KEY"
+            #else
+                -u "\$OMERO_USER"
+                -w "\$OMERO_PASSWORD"
+            #end if
         > '$log' &&
-        #end if
+
         omero search Dataset '$dataset_name' --style json > '$log2' &&
         omero logout
+
     ]]></command>
     <inputs>
         <expand macro="host_port"/>
-        <param name="folder" type="data" format="avi,bmp,btf,cif,csv,eps,fits,fli,gif,hdr,html,jp2,jpg,mov,mrc,ndpi,nhdr,nrrd,ome.tiff,par,pbm,pcx,pgm,png,ppm,psd,scn,sif,svs,tf2,tf8,tif,tif,tiff,top,txt,vms,wav,xml,zip" multiple="true" optional="false" label="Images to import into OMERO"/>
+        <param name="folder" type="data" format="avi,bmp,btf,cif,eps,fits,fli,gif,hdr,jp2,jpg,mov,mrc,ndpi,nhdr,nrrd,ome.tiff,par,pbm,pcx,pgm,png,ppm,psd,scn,sif,svs,tf2,tf8,tiff,top,vms,wav,xml,zip" multiple="true" optional="false" label="Images to import into OMERO"/>
         <param name="dataset_name" type="text" optional="false" label="Target Dataset Name"/>
-        <param name="skip_step" type="select" label="Specify optional step to skip during import.">
+        <param name="skip_step" type="select" optional="true" value= "no_skip" label="Specify optional step to skip during import.">
             <option value="all">
                 Skip all optional steps described below
             </option>
@@ -74,9 +57,6 @@
             </option>
             <option value="thumbnails">
                 Skip generation of thumbnails
-            </option>
-            <option value="no_skip" selected="True">
-                Do not skip optional step during import.
             </option>
         </param>
     </inputs>

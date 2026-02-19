@@ -13,3 +13,4 @@ def establish_connection(uuid_key, usr, psw, host, port):
     if not conn.connect():
         sys.exit("ERROR: Failed to connect to OMERO server")
     return conn
+    

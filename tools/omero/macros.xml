@@ -1,6 +1,6 @@
 <macros>
     <!-- for historic reasons the omero-py version is used as the version for all tools -->
-    <token name="@TOOL_VERSION@">5.18.0</token>
+    <token name="@TOOL_VERSION@">5.21.2</token>
     <token name="@EZOMERO_VERSION@">3.0.1</token>
     <token name="@PROFILE@">25.1</token>
 

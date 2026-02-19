@@ -12,19 +12,14 @@
         #import re
 
         mkdir folder &&
-        #if $zipped == "True"
-            unzip -j $folder -d folder &&
-        #else
         #for $image in $folder:
-            #set image = $image
             #set image_identifier = re.sub('[^\s\w\-]', '_', str($image.element_identifier))
-#if #image.ext == "zip"
-    unzip -j '$folder' -d folder &&
-#else
-    ln -s '${image}' folder/'${image_identifier}.$image.ext' &&
-#end if
-        #end for
+        #if $image.ext == "zip"
+            unzip -j '$folder' -d folder &&
+        #else
+            ln -s '${image}' folder/'${image_identifier}.$image.ext' &&
         #end if
+        #end for
 
         #if $test_username != ""
             export OMERO_USER="$test_username" &&

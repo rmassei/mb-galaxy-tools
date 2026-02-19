@@ -12,11 +12,15 @@
         #import re
 
         mkdir folder &&
+        #if $zipped == "True"
+            unzip -j $folder -d folder &&
+        #else
         #for $image in $folder:
             #set image = $image
             #set image_identifier = re.sub('[^\s\w\-]', '_', str($image.element_identifier))
             ln -s '${image}' folder/'${image_identifier}.$image.ext' &&
         #end for
+        #end if
 
         #if $test_username != ""
             export OMERO_USER="$test_username" &&
@@ -59,6 +63,7 @@
                 Skip generation of thumbnails
             </option>
         </param>
+        <param name="zipped" type="boolean" label="Are image inside a .ZIP file?" help="Images can be zipped before import, they will be automatically unzipped in Galaxy"/>
     </inputs>
     <outputs>
         <data name="log" format="txt" label="${tool.name} on ${on_string}: Imported Image List"/>
@@ -73,6 +78,7 @@
             <param name="test_username" value="root"/>
             <param name="test_password" value="omero"/>
             <param name="skip_step" value="all"/>
+            <param name="zipped" value="False"/>
             <output name="log" value="omero_output.txt" ftype="txt">
                 <assert_contents>
                     <has_n_lines n="2"/>
@@ -83,6 +89,33 @@
                 <has_text_matching expression="IMPORT_DONE.*input1.tif"/>
                 <has_text_matching expression="IMPORT_DONE.*input2.tif"/>
                 <has_text text="files uploaded, 2 filesets created, 2 images imported, 0 errors"/>
+                <has_text text="Skipping minimum/maximum computation"/>
+                <has_text text="Skipping thumbnails creation"/>
+                <has_text text="Disabling upgrade check"/>
+            </assert_stderr>
+        </test>
+        <test>
+            <param name="folder" value="input3.zip"/>
+            <param name="dataset_name" value="galaxy_test_upload"/>
+            <param name="omero_host" value="host.docker.internal"/>
+            <param name="omero_port" value="6064"/>
+            <param name="test_username" value="root"/>
+            <param name="test_password" value="omero"/>
+            <param name="skip_step" value="all"/>
+            <param name="zipped" value="True"/>
+            <output name="log" value="omero_output_zip.txt" ftype="txt">
+                <assert_contents>
+                    <has_n_lines n="2"/>
+                </assert_contents>
+            </output>
+            <output name="log2" value="omero_output_2_zip.json" ftype="json"/>
+            <assert_stderr>
+                <has_text_matching expression="IMPORT_DONE.*input1.tif"/>
+                <has_text_matching expression="IMPORT_DONE.*input2.tif"/>
+                <has_text text="files uploaded, 2 filesets created, 2 images imported, 0 errors"/>
+                <has_text text="Skipping minimum/maximum computation"/>
+                <has_text text="Skipping thumbnails creation"/>
+                <has_text text="Disabling upgrade check"/>
             </assert_stderr>
         </test>
     </tests>
